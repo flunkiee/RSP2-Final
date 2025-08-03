@@ -1,0 +1,1 @@
+gffread FL01Galaxy258-[BRAKER3 on data 257 and data 256_ GTF Annotation].gtf -T -o FL01Galaxy258-[BRAKER3 on data 257 and data 256_ GTF Annotation].gff

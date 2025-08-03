@@ -1,0 +1,36 @@
+makeblastdb -in Chromosome3.fasta -dbtype nucl -out nuclDB
+
+blastn -query CAQuery.fasta -db nuclDB \
+  -outfmt "6 qseqid sseqid pident length qstart qend sstart send evalue bitscore" \
+  -out caChrom3_hits.tsv
+
+tblastx -query CAQuery.fasta -db nuclDB \
+  -outfmt "6 qseqid sseqid pident length qstart qend sstart send evalue bitscore" \
+  -out txcaChrom3mp_hits.tsv
+
+##double check with tblastx
+
+
+
+
+
+bedAndgff.py
+
+sed '/^>/ s/ .*//' Chromosome3.fasta > trimmedC3.fasta
+ trim headers
+
+split into pul1234 and THEN
+
+awk '$4 ~ /PUL1\|/' output.bed > PUL1_regions.bed
+awk '$4 ~ /PUL2\|/' output.bed > PUL2_regions.bed
+awk '$4 ~ /PUL3\|/' output.bed > PUL3_regions.bed
+awk '$4 ~ /PUL4\|/' output.bed > PUL4_regions.bed
+
+bedtools getfasta -fi trimmedC3.fasta -bed PUL1_regions.bed -fo PUL1_sequences.fa -s
+bedtools getfasta -fi trimmedC3.fasta -bed PUL2_regions.bed -fo PUL2_sequences.fa -s
+bedtools getfasta -fi trimmedC3.fasta -bed PUL3_regions.bed -fo PUL3_sequences.fa -s
+bedtools getfasta -fi trimmedC3.fasta -bed PUL4_regions.bed -fo PUL4_sequences.fa -s
+
+works perfectly.
+excellent!
+

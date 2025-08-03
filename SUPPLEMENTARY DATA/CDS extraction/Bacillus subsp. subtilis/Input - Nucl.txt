@@ -1,0 +1,55 @@
+find . -type f -name "*.fna" -exec cat {} + > combined.fasta
+
+unwanted removed py
+id extractor py
+
+makeblastdb -in CombinedClean.fasta -dbtype nucl -out nuclDB
+
+blastn -query Rework-B-S-Query168.fasta -db nuclDB \
+  -outfmt "6 qseqid sseqid pident length qstart qend sstart send evalue bitscore" \
+  -out pathoBS_hits.csv
+
+
+
+tblastx -query Rework-B-S-Query168.fasta -db nuclDB \
+  -outfmt "6 qseqid sseqid pident length qstart qend sstart send evalue bitscore" \
+  -out bstbx_hits.tsv
+sed 's/\t/,/g' bstbx_hits.csv > bstbx_hits_formatted.csv
+
+
+echo "qseqid,sseqid,pident,length,qstart,qend,sstart,send,evalue,bitscore" > bstbx_hits_filtered.csv
+
+tblastx -query Rework-B-S-Query168.fasta -db nuclDB \
+  -outfmt "6 qseqid sseqid pident length qstart qend sstart send evalue bitscore" \
+  | awk '$3 >= 50' \
+  | sed 's/\t/,/g' \
+  >> bstbx_hits_filtered.csv
+
+
+
+##double check with tblastx
+
+
+
+
+
+python bedAndgff.py
+
+sed '/^>/ s/ .*//' CombinedCleaned.fasta > trimmedcombo.fasta
+ trim headers
+
+split into pul1234 and THEN
+
+awk '$4 ~ /YVMC\|/' output.bed > YVMC_regions.bed
+awk '$4 ~ /cypX\|/' output.bed > CYPX_regions.bed
+awk '$4 ~ /yvma\|/' output.bed > YVMA_regions.bed
+awk '$4 ~ /pchR\|/' output.bed > PCHR_regions.bed
+
+bedtools getfasta -fi trimmedcombo.fasta -bed YVMC_regions.bed -fo YVMC_sequences.fa -s
+bedtools getfasta -fi trimmedcombo.fasta -bed CYPX_regions.bed -fo CYPX_sequences.fa -s
+bedtools getfasta -fi trimmedcombo.fasta -bed YVMA_regions.bed -fo YVMA_sequences.fa -s
+bedtools getfasta -fi trimmedcombo.fasta -bed PCHR_regions.bed -fo PCHR_sequences.fa -s
+
+works perfectly.
+excellent!
+
